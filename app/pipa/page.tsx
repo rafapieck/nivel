@@ -1,10 +1,10 @@
-import PlaceholderPage from "@/components/PlaceholderPage";
+import PipaHome from "@/components/pipa/PipaHome";
 
 export default function PipaPage() {
   return (
-    <PlaceholderPage
-      title="Pipa"
-      description="Aquí podrás organizar una pipa entre vecinos."
-    />
+    <div className="space-y-5">
+      <h1 className="text-3xl font-bold">Pipa</h1>
+      <PipaHome />
+    </div>
   );
 }
