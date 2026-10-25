@@ -27,7 +27,7 @@ The tools that do exist were built to see the household **for whoever bills or c
 
 ## 4. Mockup (image-generated)
 
-![Nivel mockup](mockup.png)
+![Nivel mockup](mockup.jpg)
 
 *Prompt used to generate it:*
 > Mobile app screen mockup, clean flat design, Spanish UI, for an app called "Nivel" that reads a rooftop water tank (tinaco) in Mexico. Top: a yellow banner "FEED SIMULADO". Center: a large tank illustration filled to 62% with the text "680 L de 1,100 L". Below: a card "Te alcanza para unos 3–4 días" with a small gray tag "Estimación (ML) · Base simple: 3.2 días · error ±0.4 d". A timeline strip of the last 72 hours showing a sharp rise labeled "Entró agua · mar 2:10–4:40 pm · +420 L". A soft orange card "Bajada nocturna 2 noches seguidas — puede ser una fuga, el flotador o alguien usando agua". Bottom nav with four tabs: Tinaco, Historial, Pipa, Ajustes. Calm blue and white palette, large readable text, Android phone frame.
