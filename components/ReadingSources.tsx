@@ -5,7 +5,13 @@ import { useCallback, useEffect, useState } from "react";
 import DataBanner from "@/components/DataBanner";
 import { distanceCm, type Calibration } from "@/lib/calibration";
 import { parseReadingsCsv, type CsvRowError } from "@/lib/csv";
-import { addReadings, deleteReadingsBySource, getAllReadings, getLatestCalibration } from "@/lib/db";
+import {
+  addReadings,
+  deleteReadingsBySource,
+  getAllReadings,
+  getLatestCalibration,
+  replaceSimulatedReadings,
+} from "@/lib/db";
 import { fmtDateTime, fmtInt } from "@/lib/format";
 import { READING_SOURCES, SOURCE_LABEL, readingPoint, type Reading } from "@/lib/readings";
 import { SCENARIOS, SCENARIO_LABEL, simulateReadings, type Scenario } from "@/lib/simulator";
@@ -29,9 +35,10 @@ export default function ReadingSources() {
 
   const reload = useCallback(() => getAllReadings().then(setReadings), []);
 
+  // Re-runs whenever the page becomes visible again (routes stay mounted while hidden).
   useEffect(() => {
     getLatestCalibration().then(setCal);
-    reload();
+    reload().then(() => setMessage(null));
   }, [reload]);
 
   if (cal === undefined) return <p className="text-lg text-slate-600">Cargando…</p>;
@@ -92,9 +99,8 @@ function SimulatorCard({ cal, onDone }: { cal: Calibration; onDone: (msg: string
   async function load() {
     setBusy(true);
     try {
-      await deleteReadingsBySource("simulated");
       const points = simulateReadings(scenario, cal, { seed: Date.now() % 100000 });
-      const n = await addReadings(points, "simulated", cal.id);
+      const n = await replaceSimulatedReadings(points, cal.id);
       onDone(`Simulación cargada: ${fmtInt(n)} lecturas (${SCENARIO_LABEL[scenario]}).`);
     } finally {
       setBusy(false);

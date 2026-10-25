@@ -1,10 +1,10 @@
-import PlaceholderPage from "@/components/PlaceholderPage";
+import WaterInHistory from "@/components/WaterInHistory";
 
 export default function HistorialPage() {
   return (
-    <PlaceholderPage
-      title="Historial"
-      description="Aquí verás cuándo entró agua y cuánto se usó."
-    />
+    <div className="space-y-5">
+      <h1 className="text-3xl font-bold">Historial</h1>
+      <WaterInHistory />
+    </div>
   );
 }

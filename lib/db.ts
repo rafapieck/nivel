@@ -1,18 +1,22 @@
 import { openDB, type DBSchema, type IDBPDatabase } from "idb";
 import type { Calibration, CalibrationInput } from "./calibration";
+import type { WaterInSource } from "./analysis";
 import type { Reading, ReadingPoint, ReadingSource } from "./readings";
+
+export type EventTag = { startTs: number; source: WaterInSource };
 
 // Everything in this file stays on the phone (IndexedDB). Nothing here is ever sent to a server.
 
 interface NivelDB extends DBSchema {
   calibrations: { key: number; value: Calibration; indexes: { createdAt: number } };
   readings: { key: number; value: Reading; indexes: { ts: number; source: ReadingSource } };
+  eventTags: { key: number; value: EventTag };
 }
 
 let dbPromise: Promise<IDBPDatabase<NivelDB>> | null = null;
 
 function db() {
-  dbPromise ??= openDB<NivelDB>("nivel", 2, {
+  dbPromise ??= openDB<NivelDB>("nivel", 3, {
     upgrade(d, oldVersion) {
       if (oldVersion < 1) {
         const cal = d.createObjectStore("calibrations", { keyPath: "id", autoIncrement: true });
@@ -22,6 +26,9 @@ function db() {
         const readings = d.createObjectStore("readings", { keyPath: "id", autoIncrement: true });
         readings.createIndex("ts", "ts");
         readings.createIndex("source", "source");
+      }
+      if (oldVersion < 3) {
+        d.createObjectStore("eventTags", { keyPath: "startTs" });
       }
     },
   });
@@ -83,10 +90,47 @@ export async function getAllReadings(): Promise<Reading[]> {
   return (await db()).getAllFromIndex("readings", "ts");
 }
 
+/** Swaps the simulated feed for a new one in a single transaction; real readings are untouched. */
+export async function replaceSimulatedReadings(
+  points: ReadingPoint[],
+  calibrationId: number,
+): Promise<number> {
+  const tx = (await db()).transaction("readings", "readwrite");
+  for await (const cursor of tx.store.index("source").iterate("simulated")) {
+    await cursor.delete();
+  }
+  for (const p of points) {
+    void tx.store.add({ ...p, source: "simulated", calibrationId } as Reading);
+  }
+  await tx.done;
+  void requestPersistence();
+  return points.length;
+}
+
 export async function deleteReadingsBySource(source: ReadingSource): Promise<void> {
   const tx = (await db()).transaction("readings", "readwrite");
   for await (const cursor of tx.store.index("source").iterate(source)) {
     await cursor.delete();
   }
   await tx.done;
+}
+
+/** The user's own label for a water-in event: red (tandeo), pipa or bomba. */
+export async function setEventTag(tag: EventTag): Promise<void> {
+  await (await db()).put("eventTags", tag);
+}
+
+export async function getEventTags(): Promise<EventTag[]> {
+  return (await db()).getAll("eventTags");
+}
+
+/** "Borrar mis datos": wipes calibrations, readings and tags from this phone. */
+export async function clearAllData(): Promise<void> {
+  const tx = (await db()).transaction(["calibrations", "readings", "eventTags"], "readwrite");
+  await Promise.all([
+    tx.objectStore("calibrations").clear(),
+    tx.objectStore("readings").clear(),
+    tx.objectStore("eventTags").clear(),
+    tx.done,
+  ]);
 }
