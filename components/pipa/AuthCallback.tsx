@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getSupabase } from "@/lib/supabase";
+import { takePendingInvite } from "@/lib/usePipa";
 
 /** Google sends the user back here; the Supabase client exchanges ?code= for a session. */
 export default function AuthCallback() {
@@ -19,8 +20,9 @@ export default function AuthCallback() {
     }
     // getSession waits for the client's own code exchange to finish.
     sb.auth.getSession().then(({ data }) => {
-      if (data.session) router.replace("/pipa");
-      else setFailed(true);
+      if (!data.session) return setFailed(true);
+      const invite = takePendingInvite();
+      router.replace(invite ? `/pipa/unirse?c=${encodeURIComponent(invite)}` : "/pipa");
     });
   }, [router]);
 

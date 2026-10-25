@@ -32,3 +32,11 @@ Deben salir 7 tablas, todas con `rowsecurity = true`. Para la captura de segurid
    Si dice "Falta preparar la base de datos", la migración no corrió.
 
 Google ya está activado y `https://nivel-nine.vercel.app/**` ya está en Redirect URLs, así que no hay que cambiar nada en **Authentication → URL Configuration**. La app siempre regresa a `/auth/callback` de su propio dominio y no usa el Site URL (que es de La Suma).
+
+## Migraciones siguientes
+
+Córrelas en orden, una por una, igual que la primera (SQL Editor → New query → pegar → Run). Cada una corre en una sola transacción: si falla, no cambia nada.
+
+| Archivo | Qué hace |
+|---|---|
+| `20261025010000_nivel_server_split.sql` | El servidor calcula cuánto le toca a cada quien; nadie puede cambiar su propio monto. |

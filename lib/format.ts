@@ -31,3 +31,6 @@ export const fmtDays = (r: { min: number; max: number }) =>
 
 const dayMonthFmt = new Intl.DateTimeFormat("es-MX", { day: "numeric", month: "short" });
 export const fmtDayMonth = (ts: number) => dayMonthFmt.format(ts).replace(".", "");
+
+const mxnFmt = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" });
+export const fmtMxn = (n: number) => mxnFmt.format(n);
