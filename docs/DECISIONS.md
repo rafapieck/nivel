@@ -33,4 +33,19 @@
 - Verified locally on Postgres 16 with a mocked `auth` schema: anon denied; outsider sees nothing; payment rows visible only to the owner and the coordinator; the coordinator writes offline rows only; strict snapshot; discrepancies visible to raiser + coordinator, resolvable only by the coordinator, never deletable; pending offline member doesn't block closing.
 - Known gap for F7: `share_mxn` is still written by the client; F7 should compute the split server-side (or validate it) when the coordinator finalises the order.
 
-**Next first move:** Rafael runs the migration (docs/SUPABASE_SETUP.md); then F7 — group + invite link + offline members + order + split + private payment log.
+**Next first move (superseded):** F7 — done below.
+
+### F7–F9 (same day)
+- **Split is server-owned** (migration `20261025010000`): `nivel_recompute_split` runs on every change of liters or price; each share is floored to whole pesos and the remainder goes on the coordinator's line (largest request if the coordinator asked for no water), stored in `rounding_mxn` and shown. Clients have no INSERT/UPDATE on `share_mxn`/`rounding_mxn`. `lib/split.ts` mirrors it for tests (packet test 7).
+- Liters freeze once the order leaves `open`; payment method can always be corrected and never gates delivery or closing.
+- Server-side stamping only for human changes (liters/payment), so recomputing the split doesn't overwrite `recorded_by` on other people's rows.
+- The group embed names `nivel_group_members_group_id_fkey`: two FKs link groups and members, and PostgREST would otherwise reject the embed as ambiguous.
+- Pipa pages use query strings (`/pipa/grupo?id=`, `/pipa/pedido?id=`, `/pipa/unirse?c=`) under Suspense; the invite code survives the Google round trip in sessionStorage.
+- **Delivery is server-derived** (migration `20261025020000`): the coordinator sends only time, fill minutes and a note; the server fills quoted liters and N-of-M, and recomputes observed/estimated when a summary is shared. Cistern mode counts only the cistern summary; tinacos mode sums tinaco deltas with M = households.
+- Estimated = observed + each reporting owner's own `use_during_fill_l` (their phone's rate × fill minutes), a single number per summary — the server never sees rates or series.
+- Summaries: strict Zod on the phone and a 4-key check constraint on the server; allowed only after the delivery exists and before the order closes. "No compartir" is remembered per order in localStorage and sends nothing.
+- Discrepancy button appears at > 15% quoted-vs-observed gap; the server stamps `handled_by`/`resolved_at` and blocks reopening; no delete.
+- `/costo` starts empty and shows totals only; no savings or ROI computed.
+- Verified: SQL flows on local Postgres 16 with a mocked Supabase auth schema (split math, tampering, liter lock, tests 11–15, both delivery modes); UI flows in Playwright against a mocked PostgREST, checking exactly what each screen sends. Not verified against the live project until Rafael runs migrations 2 and 3.
+
+**Next first move:** Rafael runs `20261025010000_nivel_server_split.sql` then `20261025020000_nivel_delivery.sql`; then a live run of packet test 11 with two Google accounts (screenshot of the Supabase query) and the RLS-policies screenshot for the security floor.
