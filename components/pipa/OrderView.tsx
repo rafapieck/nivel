@@ -5,14 +5,18 @@ import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Field, Notice, card, inputCls, secondaryBtn } from "@/components/ui";
 import { fmtInt, fmtMxn } from "@/lib/format";
+import DeliverySection, { type DeliveryData } from "@/components/pipa/DeliverySection";
 import {
   STATUS_LABEL,
   coordinatorOf,
   errorMessage,
+  getDelivery,
   getGroup,
   getOrder,
   getTotals,
+  listDiscrepancies,
   listShares,
+  listSummaries,
   myMember,
   saveShare,
   type Group,
@@ -31,6 +35,7 @@ export type OrderData = {
   totals: Totals | null;
   me: Member | undefined;
   isCoordinator: boolean;
+  dd: DeliveryData;
 };
 
 export default function OrderView() {
@@ -59,10 +64,13 @@ function Loaded({ ctx, id }: { ctx: PipaCtx; id: string }) {
     try {
       const order = await getOrder(sb, id);
       if (!order) return setData(null);
-      const [group, shares, totals] = await Promise.all([
+      const [group, shares, totals, delivery, summaries, discrepancies] = await Promise.all([
         getGroup(sb, order.group_id),
         listShares(sb, id),
         getTotals(sb, id),
+        getDelivery(sb, id),
+        listSummaries(sb, id),
+        listDiscrepancies(sb, id),
       ]);
       if (!group) return setData(null);
       setData({
@@ -72,6 +80,7 @@ function Loaded({ ctx, id }: { ctx: PipaCtx; id: string }) {
         totals,
         me: myMember(group, session.user.id),
         isCoordinator: coordinatorOf(group)?.user_id === session.user.id,
+        dd: { delivery, summaries, discrepancies },
       });
       setError(null);
     } catch (e) {
@@ -126,6 +135,8 @@ function Loaded({ ctx, id }: { ctx: PipaCtx; id: string }) {
           onError={setError}
         />
       )}
+
+      <DeliverySection data={data} dd={data.dd} ctx={ctx} reload={reload} />
 
       {isCoordinator && <CoordinatorPanel data={data} ctx={ctx} onSaved={reload} onError={setError} />}
 

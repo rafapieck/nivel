@@ -196,8 +196,109 @@ export function myMember(g: Group, userId: string): Member | undefined {
 export function errorMessage(e: unknown): string {
   const msg = e instanceof Error ? e.message : String(e);
   if (/no longer open/.test(msg)) return "El pedido ya no acepta cambios de litros.";
+  if (/already resolved/.test(msg)) return "Esa aclaración ya está cerrada.";
+  if (/duplicate key/.test(msg)) return "Eso ya estaba registrado.";
   if (/invite not found/.test(msg)) return "Esa invitación no existe o ya no es válida.";
   if (/row-level security|permission denied/.test(msg)) return "No tienes permiso para hacer eso.";
   if (/check constraint/.test(msg)) return "Algún valor está fuera del rango permitido.";
   return "Algo salió mal. Intenta de nuevo.";
+}
+
+export type Delivery = {
+  order_id: string;
+  delivered_at: string;
+  fill_minutes: number;
+  quoted_liters: number;
+  observed_liters: number | null;
+  observed_tanks_reported: number;
+  observed_tanks_total: number;
+  estimated_liters: number | null;
+  notes: string | null;
+};
+
+export type TankSummaryRow = {
+  order_id: string;
+  member_id: string;
+  tank_type: "tinaco" | "cisterna";
+  before_l: number;
+  after_l: number;
+  delta_l: number;
+  approved_at: string;
+};
+
+export type Discrepancy = {
+  id: string;
+  order_id: string;
+  raised_by: string;
+  description: string;
+  status: "open" | "resolved";
+  resolution_note: string | null;
+  created_at: string;
+  resolved_at: string | null;
+};
+
+const numOrNull = (v: unknown) => (v === null || v === undefined ? null : Number(v));
+
+export async function getDelivery(sb: SupabaseClient, orderId: string): Promise<Delivery | null> {
+  const d = check(await sb.from("nivel_deliveries").select("*").eq("order_id", orderId).maybeSingle()) as Delivery | null;
+  return (
+    d && {
+      ...d,
+      observed_liters: numOrNull(d.observed_liters),
+      estimated_liters: numOrNull(d.estimated_liters),
+    }
+  );
+}
+
+/** The server fills quoted liters, observed/estimated and the "N de M" counts. */
+export async function recordDelivery(
+  sb: SupabaseClient,
+  orderId: string,
+  input: { deliveredAt: string; fillMinutes: number; notes: string | null },
+) {
+  check(
+    await sb.from("nivel_deliveries").insert({
+      order_id: orderId,
+      delivered_at: input.deliveredAt,
+      fill_minutes: input.fillMinutes,
+      notes: input.notes,
+    }),
+  );
+}
+
+export async function listSummaries(sb: SupabaseClient, orderId: string): Promise<TankSummaryRow[]> {
+  const rows = check(
+    await sb
+      .from("nivel_tank_summaries")
+      .select("order_id, member_id, tank_type, before_l, after_l, delta_l, approved_at")
+      .eq("order_id", orderId),
+  ) as TankSummaryRow[];
+  return rows.map((r) => ({ ...r, before_l: num(r.before_l), after_l: num(r.after_l), delta_l: num(r.delta_l) }));
+}
+
+/** Payload must already be validated with tankSummaryPayload (strict). */
+export async function shareSummary(sb: SupabaseClient, payload: object) {
+  check(await sb.from("nivel_tank_summaries").insert(payload));
+}
+
+/** RLS returns only the discrepancies the caller raised, or all of them for the coordinator. */
+export async function listDiscrepancies(sb: SupabaseClient, orderId: string): Promise<Discrepancy[]> {
+  return check(
+    await sb.from("nivel_discrepancies").select("*").eq("order_id", orderId).order("created_at"),
+  );
+}
+
+export async function raiseDiscrepancy(sb: SupabaseClient, orderId: string, userId: string, description: string) {
+  check(
+    await sb.from("nivel_discrepancies").insert({
+      order_id: orderId,
+      raised_by: userId,
+      description,
+      status: "open",
+    }),
+  );
+}
+
+export async function resolveDiscrepancy(sb: SupabaseClient, id: string, note: string) {
+  check(await sb.from("nivel_discrepancies").update({ status: "resolved", resolution_note: note }).eq("id", id));
 }

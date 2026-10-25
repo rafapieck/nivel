@@ -40,3 +40,4 @@ Córrelas en orden, una por una, igual que la primera (SQL Editor → New query 
 | Archivo | Qué hace |
 |---|---|
 | `20261025010000_nivel_server_split.sql` | El servidor calcula cuánto le toca a cada quien; nadie puede cambiar su propio monto. |
+| `20261025020000_nivel_delivery.sql` | Entrega: el servidor calcula observados/estimados con los resúmenes compartidos; aclaraciones que solo cierra quien coordina. |

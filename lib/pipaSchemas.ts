@@ -54,3 +54,17 @@ export const toNumber = (s: string) => {
   // Commas as thousands separators when a dot is present, otherwise as decimal mark.
   return Number(t.includes(".") ? t.replace(/,/g, "") : t.replace(",", "."));
 };
+
+export const deliveryInput = z
+  .object({
+    deliveredAt: z.number({ error: "Fecha inválida" }).refine((t) => t <= Date.now() + 3600000, "La entrega no puede estar en el futuro"),
+    fillMinutes: z
+      .number({ error: "Escribe los minutos" })
+      .int("Usa minutos enteros")
+      .min(0, "Entre 0 y 1,440 minutos")
+      .max(1440, "Entre 0 y 1,440 minutos"),
+    notes: z.string().trim().max(500, "Máximo 500 caracteres"),
+  })
+  .strict();
+
+export const discrepancyText = z.string().trim().min(1, "Escribe qué pasó").max(500, "Máximo 500 caracteres");
