@@ -1,10 +1,10 @@
-import PlaceholderPage from "@/components/PlaceholderPage";
+import CalibrationSettings from "@/components/CalibrationSettings";
 
 export default function AjustesPage() {
   return (
-    <PlaceholderPage
-      title="Ajustes"
-      description="Aquí podrás calibrar tu tinaco, exportar tus lecturas y borrar tus datos."
-    />
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">Ajustes</h1>
+      <CalibrationSettings />
+    </div>
   );
 }

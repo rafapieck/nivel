@@ -1,10 +1,5 @@
-import PlaceholderPage from "@/components/PlaceholderPage";
+import TankHome from "@/components/TankHome";
 
 export default function TinacoPage() {
-  return (
-    <PlaceholderPage
-      title="Tinaco"
-      description="Aquí verás cuánta agua tienes y para cuántos días te alcanza. Funciona sin cuenta."
-    />
-  );
+  return <TankHome />;
 }
