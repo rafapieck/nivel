@@ -10,10 +10,11 @@ import {
   type TankType,
 } from "@/lib/calibration";
 import { addCalibration } from "@/lib/db";
+import { parseNumberMx } from "@/lib/number";
 
 type Field = "type" | "capacityL" | "dFullCm" | "dEmptyCm";
 
-const toNumber = (s: string) => (s.trim() === "" ? NaN : Number(s.replace(",", ".")));
+const toNumber = parseNumberMx;
 
 export default function CalibrationForm({
   initial,

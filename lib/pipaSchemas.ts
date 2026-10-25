@@ -47,13 +47,7 @@ export const openOrderInput = z
 
 export const inviteCode = z.string().regex(/^[0-9a-f]{16}$/, "Invitación inválida");
 
-/** Parses "1,200.50" / "1200,5" style input into a number (NaN when empty). */
-export const toNumber = (s: string) => {
-  const t = s.trim().replace(/\s/g, "");
-  if (t === "") return NaN;
-  // Commas as thousands separators when a dot is present, otherwise as decimal mark.
-  return Number(t.includes(".") ? t.replace(/,/g, "") : t.replace(",", "."));
-};
+export { parseNumberMx as toNumber } from "./number";
 
 export const deliveryInput = z
   .object({

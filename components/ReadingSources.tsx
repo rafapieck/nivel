@@ -13,6 +13,7 @@ import {
   replaceSimulatedReadings,
 } from "@/lib/db";
 import { fmtDateTime, fmtInt } from "@/lib/format";
+import { parseNumberMx } from "@/lib/number";
 import { READING_SOURCES, SOURCE_LABEL, readingPoint, type Reading } from "@/lib/readings";
 import { SCENARIOS, SCENARIO_LABEL, simulateReadings, type Scenario } from "@/lib/simulator";
 
@@ -212,7 +213,7 @@ function ManualCard({ cal, onDone }: { cal: Calibration; onDone: (msg: string) =
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    const d = distance.trim() === "" ? NaN : Number(distance.replace(",", "."));
+    const d = parseNumberMx(distance);
     const dist = distanceCm.safeParse(d);
     if (!dist.success) return setError(dist.error.issues[0].message);
     const parsed = readingPoint.safeParse({ ts: new Date(when).getTime(), distanceCm: dist.data });
