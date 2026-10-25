@@ -8,5 +8,7 @@ export default defineConfig({
   test: {
     include: ["**/*.test.ts"],
     exclude: ["node_modules/**", ".next/**"],
+    // Night-drop and tandeo windows are local clock times.
+    env: { TZ: "America/Mexico_City" },
   },
 });

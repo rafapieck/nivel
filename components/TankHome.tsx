@@ -34,6 +34,12 @@ export default function TankHome() {
       <div className="rounded-2xl bg-white p-4 shadow-sm">
         <CalibrationSummary cal={cal} />
       </div>
+      <Link
+        href="/lecturas"
+        className="flex min-h-14 items-center justify-center rounded-xl bg-blue-700 text-lg font-semibold text-white"
+      >
+        Agregar lecturas
+      </Link>
       <Link href="/ajustes" className="block text-lg font-semibold text-blue-700 underline">
         Recalibrar en Ajustes
       </Link>
