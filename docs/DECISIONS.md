@@ -56,3 +56,11 @@
   - Tank form: title "Tu tinaco", first line "Con esto te decimos cuántos días de agua te quedan.", helpers explain measuring from the lid with a tape or marked stick, and that empty distance is the tank's inside height ("No tienes que vaciarlo"). No "sensor" on the form; the blind-zone note now says it only matters for electronic meters.
   - Lecturas order: "Medir a mano" first, then "Probar con datos de prueba", then "Si tienes un sensor" (CSV).
   - Forecast tag reads "Estimación (ML · aprendizaje automático)" (also on the delivery column and the summary note); "Error" became "Qué tanto falló en las últimas 24 h".
+
+## Session close — 2026-10-25
+- Rafael ran migrations 2 and 3 in Supabase ("Success"). Mechanical pass done: packet §12 tests 1–16 and the security floor all pass; results in `docs/TEST_LOG.md`.
+- **Bug found:** number inputs read "1,100" as 1.1 (comma treated as a decimal point), so the tank form's own example saved a 1.1 L tinaco and Pipa turned "10,000 L" into 10 L and "$1,200" into $1.20, all within Zod limits. Fixed with one Mexico-aware parser (`lib/number.ts`) used everywhere, plus a test that fails on the old code (`c189218`).
+- Decision: in number fields a comma is a thousands separator; a lone decimal comma ("12,5") is still accepted; ambiguous input ("1.200,50") is rejected instead of guessed.
+- Still open: live test 11 with two Google accounts and the RLS-policies screenshot from the Supabase dashboard; 72 h field test on a real tinaco (next ship).
+
+**Next first move:** run test 11 live with two Google accounts (Supabase SQL or the app), take the policies screenshot, and attach both to the packet.
