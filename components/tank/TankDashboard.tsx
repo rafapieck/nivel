@@ -22,7 +22,7 @@ export default function TankDashboard({ data }: { data: TankData }) {
         <section className="space-y-2 rounded-2xl bg-white p-4 shadow-sm">
           <p className="text-xl font-semibold">Aún no hay lecturas</p>
           <p className="text-base text-slate-600">
-            Carga una simulación, importa un CSV de tu sensor o mide a mano.
+            Mide a mano cuánta agua tienes, o prueba la app con datos de prueba.
           </p>
         </section>
       )}

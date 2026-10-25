@@ -177,7 +177,7 @@ function DeliveryView({ data, dd, ctx, reload, delivery }: Props & { delivery: D
             )}
             <dd className="mt-1">
               <span className="inline-block rounded-full bg-slate-200 px-1.5 py-0.5 text-xs font-semibold leading-tight text-slate-800">
-                Estimación (ML)
+                Estimación (ML · aprendizaje automático)
               </span>
             </dd>
           </div>
@@ -350,7 +350,7 @@ function MySummary({
       </p>
       <p className="text-sm text-slate-600">{d.concurrent_use_note}</p>
       {tank.sources.has("simulated") && (
-        <p className="rounded-lg bg-yellow-300 px-3 py-2 text-center text-base font-bold text-yellow-950">FEED SIMULADO</p>
+        <p className="rounded-lg bg-yellow-300 px-3 py-2 text-center text-base font-bold text-yellow-950">DATOS DE PRUEBA — NO SON DE TU TINACO</p>
       )}
       <p className="text-base text-slate-700">
         Solo se comparte esto: antes, después, cuánto subió y la calibración. Tus lecturas no se

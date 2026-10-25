@@ -34,30 +34,30 @@ export default function ForecastCard({ a }: { a: TankAnalysis }) {
 
   const mlDays = ml && ml.litersPerDay > 0 ? current.liters / ml.litersPerDay : null;
   const errors = heldOut
-    ? `Error en las últimas 24 h: ML ±${fmtOneDecimal(heldOut.mlMaeL)} L · base ±${fmtOneDecimal(heldOut.baselineMaeL)} L`
-    : "Aún no hay 24 h extra para medir el error.";
+    ? `Qué tanto falló en las últimas 24 h: ML ±${fmtOneDecimal(heldOut.mlMaeL)} L · base ±${fmtOneDecimal(heldOut.baselineMaeL)} L`
+    : "Aún no hay 24 h extra para ver qué tanto falla.";
 
   return (
     <Card>
       <p className="text-2xl font-semibold">Te alcanza para unos {fmtDays(days)} días</p>
       {lead === "ml" ? (
         <p className="flex flex-wrap items-center gap-1 text-base text-slate-700">
-          <MlTag>Estimación (ML)</MlTag>
+          <MlTag>Estimación (ML · aprendizaje automático)</MlTag>
           {baselineDays !== null && <span>· Base simple: {fmtOneDecimal(baselineDays)} días</span>}
         </p>
       ) : (
         <p className="flex flex-wrap items-center gap-1 text-base text-slate-700">
           <MlTag>Base simple</MlTag>
-          {mlDays !== null && <span>· Estimación (ML): {fmtOneDecimal(mlDays)} días</span>}
+          {mlDays !== null && <span>· Estimación (ML · aprendizaje automático): {fmtOneDecimal(mlDays)} días</span>}
         </p>
       )}
       <p className="text-sm text-slate-600">{errors}</p>
       <p className="text-sm text-slate-600">
         {heldOut
           ? lead === "ml"
-            ? "La estimación (ML) acertó mejor que la base simple, por eso va primero."
-            : "La base simple acertó mejor que la estimación (ML), por eso va primero."
-          : "Mientras no se pueda medir el error, va primero la base simple."}
+            ? "La estimación con aprendizaje automático acertó mejor que la base simple, por eso va primero."
+            : "La base simple acertó mejor que la estimación con aprendizaje automático, por eso va primero."
+          : "Mientras no se pueda ver qué tanto falla, va primero la base simple."}
       </p>
     </Card>
   );

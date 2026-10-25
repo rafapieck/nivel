@@ -12,7 +12,8 @@ export default function TankHome() {
   if (data === null) {
     return (
       <section className="space-y-4">
-        <h1 className="text-3xl font-bold">Declara tu tinaco</h1>
+        <h1 className="text-3xl font-bold">Tu tinaco</h1>
+        <p className="text-xl">Con esto te decimos cuántos días de agua te quedan.</p>
         <p className="text-lg text-slate-600">
           Toma unos 2 minutos. No necesitas cuenta: todo se guarda solo en este teléfono.
         </p>

@@ -49,3 +49,10 @@
 - Verified: SQL flows on local Postgres 16 with a mocked Supabase auth schema (split math, tampering, liter lock, tests 11–15, both delivery modes); UI flows in Playwright against a mocked PostgREST, checking exactly what each screen sends. Not verified against the live project until Rafael runs migrations 2 and 3.
 
 **Next first move:** Rafael runs `20261025010000_nivel_server_split.sql` then `20261025020000_nivel_delivery.sql`; then a live run of packet test 11 with two Google accounts (screenshot of the Supabase query) and the RLS-policies screenshot for the security floor.
+
+### Persona-test fix (same day)
+- Synthetic user Doña Carmen (61, no sensor, no tape measure) got lost on the tank screens. Fixed the worst confusion with plain Spanish:
+  - Simulated-data banner now reads **"DATOS DE PRUEBA — NO SON DE TU TINACO"** (still yellow, still on every simulated screen — Blueprint condition 6). The simulator source is labeled "Datos de prueba" everywhere.
+  - Tank form: title "Tu tinaco", first line "Con esto te decimos cuántos días de agua te quedan.", helpers explain measuring from the lid with a tape or marked stick, and that empty distance is the tank's inside height ("No tienes que vaciarlo"). No "sensor" on the form; the blind-zone note now says it only matters for electronic meters.
+  - Lecturas order: "Medir a mano" first, then "Probar con datos de prueba", then "Si tienes un sensor" (CSV).
+  - Forecast tag reads "Estimación (ML · aprendizaje automático)" (also on the delivery column and the summary note); "Error" became "Qué tanto falló en las últimas 24 h".

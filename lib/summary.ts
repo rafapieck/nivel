@@ -84,7 +84,7 @@ export function buildTankSummary(
       },
       concurrent_use_note:
         use !== null
-          ? `Durante el llenado se pudo seguir usando agua: unos ${Math.round(use)} L (estimación ML).`
+          ? `Durante el llenado se pudo seguir usando agua: unos ${Math.round(use)} L (estimación ML · aprendizaje automático).`
           : "No hay estimación del agua usada durante el llenado.",
       use_during_fill_l: use,
     },

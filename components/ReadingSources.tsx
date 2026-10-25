@@ -47,7 +47,7 @@ export default function ReadingSources() {
       <p className="text-lg">
         Primero{" "}
         <Link href="/" className="font-semibold text-blue-700 underline">
-          declara tu tinaco
+          llena los datos de tu tinaco
         </Link>
         .
       </p>
@@ -85,9 +85,9 @@ export default function ReadingSources() {
         </p>
       )}
 
+      <ManualCard cal={cal} onDone={(m) => reload().then(() => setMessage(m))} />
       <SimulatorCard cal={cal} onDone={(m) => reload().then(() => setMessage(m))} />
       <CsvCard cal={cal} onDone={(m) => reload().then(() => setMessage(m))} />
-      <ManualCard cal={cal} onDone={(m) => reload().then(() => setMessage(m))} />
     </div>
   );
 }
@@ -101,7 +101,7 @@ function SimulatorCard({ cal, onDone }: { cal: Calibration; onDone: (msg: string
     try {
       const points = simulateReadings(scenario, cal, { seed: Date.now() % 100000 });
       const n = await replaceSimulatedReadings(points, cal.id);
-      onDone(`Simulación cargada: ${fmtInt(n)} lecturas (${SCENARIO_LABEL[scenario]}).`);
+      onDone(`Datos de prueba cargados: ${fmtInt(n)} lecturas (${SCENARIO_LABEL[scenario]}).`);
     } finally {
       setBusy(false);
     }
@@ -109,17 +109,16 @@ function SimulatorCard({ cal, onDone }: { cal: Calibration; onDone: (msg: string
 
   async function clear() {
     await deleteReadingsBySource("simulated");
-    onDone("Se borraron las lecturas simuladas.");
+    onDone("Se borraron los datos de prueba.");
   }
 
   return (
     <section className={card} aria-labelledby="sim">
       <h2 id="sim" className="text-xl font-bold">
-        Simulador
+        Probar con datos de prueba
       </h2>
       <p className="text-base text-slate-600">
-        Imita un sensor que mide cada 10 minutos (mediana de 5 mediciones, ±1 cm de ruido). Datos
-        inventados para probar la app.
+        Llena la app con lecturas inventadas para ver cómo funciona. No son de tu tinaco.
       </p>
       <label htmlFor="scenario" className="block text-lg font-semibold">
         Escenario
@@ -137,11 +136,11 @@ function SimulatorCard({ cal, onDone }: { cal: Calibration; onDone: (msg: string
         ))}
       </select>
       <button type="button" onClick={load} disabled={busy} className={primaryBtn}>
-        {busy ? "Cargando…" : "Cargar simulación"}
+        {busy ? "Cargando…" : "Cargar datos de prueba"}
       </button>
-      <p className="text-sm text-slate-600">Reemplaza la simulación anterior. No toca tus lecturas reales.</p>
+      <p className="text-sm text-slate-600">Reemplaza los datos de prueba anteriores. No borra tus mediciones.</p>
       <button type="button" onClick={clear} className={secondaryBtn}>
-        Borrar lecturas simuladas
+        Borrar datos de prueba
       </button>
     </section>
   );
@@ -178,10 +177,10 @@ function CsvCard({ cal, onDone }: { cal: Calibration; onDone: (msg: string) => v
   return (
     <section className={card} aria-labelledby="csv">
       <h2 id="csv" className="text-xl font-bold">
-        Importar CSV del sensor
+        Si tienes un sensor
       </h2>
       <p className="text-base text-slate-600">
-        Formato: <code className="rounded bg-slate-100 px-1">timestamp,distance_cm</code>. La fecha
+        Importa el archivo CSV que guarda tu sensor. Formato: <code className="rounded bg-slate-100 px-1">timestamp,distance_cm</code>. La fecha
         puede ser ISO (2026-10-20T14:10:00) o tiempo Unix.
       </p>
       <label className={`${primaryBtn} flex cursor-pointer items-center justify-center`}>

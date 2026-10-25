@@ -23,7 +23,7 @@ export default function WaterInHistory() {
   }, []);
 
   if (data === undefined) return <p className="text-lg text-slate-600">Cargando…</p>;
-  if (data === null) return <p className="text-lg text-slate-600">Primero declara tu tinaco.</p>;
+  if (data === null) return <p className="text-lg text-slate-600">Primero llena los datos de tu tinaco en la pestaña Tinaco.</p>;
 
   const events = [...data.analysis.events].reverse();
   const spanH = data.samples.length > 1 ? (data.samples.at(-1)!.ts - data.samples[0].ts) / 3600000 : 0;

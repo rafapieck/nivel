@@ -5,7 +5,7 @@ export const READING_SOURCES = ["simulated", "csv", "manual"] as const;
 export type ReadingSource = (typeof READING_SOURCES)[number];
 
 export const SOURCE_LABEL: Record<ReadingSource, string> = {
-  simulated: "Simulador",
+  simulated: "Datos de prueba",
   csv: "CSV",
   manual: "Manual",
 };

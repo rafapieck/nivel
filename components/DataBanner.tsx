@@ -13,7 +13,7 @@ export default function DataBanner({ sources }: { sources: Iterable<ReadingSourc
           role="status"
           className="rounded-lg bg-yellow-300 px-3 py-2 text-center text-base font-bold tracking-wide text-yellow-950"
         >
-          FEED SIMULADO
+          DATOS DE PRUEBA — NO SON DE TU TINACO
         </p>
       )}
       {real && (

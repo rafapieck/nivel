@@ -1,7 +1,7 @@
 import { levelToDistance, type CalibrationInput } from "./calibration";
 import type { ReadingPoint } from "./readings";
 
-// Simulated ESP32 ultrasonic feed. Everything it produces is labeled "FEED SIMULADO".
+// Simulated ESP32 ultrasonic feed. Everything it produces is labeled "DATOS DE PRUEBA — NO SON DE TU TINACO" (yellow).
 
 export const SCENARIOS = ["normal", "tandeo", "leak", "night_refill", "flat", "history4w"] as const;
 export type Scenario = (typeof SCENARIOS)[number];

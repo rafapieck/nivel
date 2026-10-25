@@ -26,7 +26,7 @@ export default function CalibrationSettings() {
           <CalibrationSummary cal={current} />
         </div>
       ) : (
-        <p className="text-lg text-slate-600">Aún no declaras tu tinaco.</p>
+        <p className="text-lg text-slate-600">Aún no llenas los datos de tu tinaco.</p>
       )}
 
       {editing || !current ? (

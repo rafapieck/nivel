@@ -98,21 +98,21 @@ export default function CalibrationForm({
         id="dFull"
         label="Distancia cuando está lleno"
         unit="cm"
-        hint="Del sensor (o la tapa) al agua con el tinaco lleno."
+        hint="Mide de la tapa al agua con una cinta o un palo marcado, cuando el tinaco esté lleno."
         value={dFull}
         onChange={setDFull}
         error={errors.dFullCm}
       />
       {blindZoneWarning && !errors.dFullCm && (
         <p className="rounded-lg bg-amber-50 p-3 text-base text-amber-900">
-          Ojo: muchos sensores no miden bien a menos de 20–25 cm. Revisa la hoja de tu sensor.
+          Si usas un medidor electrónico: muchos no miden bien a menos de 20–25 cm. Si mides con cinta, no importa.
         </p>
       )}
       <NumberField
         id="dEmpty"
         label="Distancia cuando está vacío"
         unit="cm"
-        hint="Del sensor (o la tapa) al fondo del tinaco."
+        hint="La altura del tinaco por dentro. No tienes que vaciarlo."
         value={dEmpty}
         onChange={setDEmpty}
         error={errors.dEmptyCm}
